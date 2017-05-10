@@ -17,6 +17,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    CALayer *TopBorder = [CALayer layer];
+    TopBorder.frame = CGRectMake(0.0f, 0.0f, _viewPreview.frame.size.width, 3.0f);
+    TopBorder.backgroundColor = [UIColor redColor].CGColor;
+    [_viewPreview.layer addSublayer:TopBorder];
 }
 
 - (IBAction)startRecording:(id)sender {

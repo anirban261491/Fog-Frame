@@ -14,6 +14,8 @@
 @property (nonatomic, strong) AVCaptureSession *captureSession;
 @property (nonatomic, strong) AVCaptureVideoPreviewLayer *videoPreviewLayer;
 @property (weak, nonatomic) IBOutlet UIView *viewPreview;
+@property (weak, nonatomic) IBOutlet UILabel *SSIDLabel;
+@property (weak, nonatomic) IBOutlet UILabel *PasswordLabel;
 
 @end
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="013-7C-FNg">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -31,31 +31,91 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GCa-u4-S81">
                                 <rect key="frame" x="20" y="468" width="335" height="30"/>
                                 <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <state key="normal" title="Start scanning">
+                                <state key="normal" title="Start scanning a QR code">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
                                     <action selector="startRecording:" destination="BYZ-38-t0r" eventType="touchUpInside" id="TcD-WB-4Hq"/>
                                 </connections>
                             </button>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="SSID:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QJr-sH-pH0">
+                                <rect key="frame" x="20" y="519" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Password:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cn6-Q3-NaC">
+                                <rect key="frame" x="20" y="556" width="78.5" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="Cn6-Q3-NaC" firstAttribute="leading" secondItem="QJr-sH-pH0" secondAttribute="leading" id="12F-7r-srx"/>
+                            <constraint firstItem="Cn6-Q3-NaC" firstAttribute="top" secondItem="QJr-sH-pH0" secondAttribute="bottom" constant="16" id="AbA-Jb-seZ"/>
                             <constraint firstItem="GCa-u4-S81" firstAttribute="leading" secondItem="Tx5-Zm-RA4" secondAttribute="leading" id="B2T-wN-2OL"/>
                             <constraint firstItem="GCa-u4-S81" firstAttribute="trailing" secondItem="Tx5-Zm-RA4" secondAttribute="trailing" id="B5Q-6n-kQi"/>
                             <constraint firstItem="Tx5-Zm-RA4" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="JCC-Gk-N2C"/>
                             <constraint firstItem="GCa-u4-S81" firstAttribute="top" secondItem="Tx5-Zm-RA4" secondAttribute="bottom" constant="48" id="Nwx-mb-A2p"/>
                             <constraint firstItem="Tx5-Zm-RA4" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="20" id="WT5-OY-JCP"/>
+                            <constraint firstItem="QJr-sH-pH0" firstAttribute="top" secondItem="GCa-u4-S81" secondAttribute="bottom" constant="21" id="YDL-WE-pbZ"/>
+                            <constraint firstItem="QJr-sH-pH0" firstAttribute="leading" secondItem="GCa-u4-S81" secondAttribute="leading" id="dXs-Z6-8r5"/>
                             <constraint firstAttribute="trailing" secondItem="Tx5-Zm-RA4" secondAttribute="trailing" constant="20" id="eBh-xB-gem"/>
                         </constraints>
                     </view>
                     <nil key="simulatedStatusBarMetrics"/>
                     <connections>
+                        <outlet property="PasswordLabel" destination="Cn6-Q3-NaC" id="Xln-2e-g22"/>
                         <outlet property="viewPreview" destination="Tx5-Zm-RA4" id="ex6-wZ-0pr"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="117.59999999999999" y="121.88905547226388"/>
+        </scene>
+        <!--Connection View Controller-->
+        <scene sceneID="2nY-MA-PDQ">
+            <objects>
+                <viewController id="013-7C-FNg" customClass="ConnectionViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="nob-8b-Pfv"/>
+                        <viewControllerLayoutGuide type="bottom" id="E3C-ST-njk"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="UTs-M4-eXl">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2DH-Mp-ejW">
+                                <rect key="frame" x="130" y="318.5" width="114" height="30"/>
+                                <state key="normal" title="Start connection"/>
+                                <connections>
+                                    <action selector="initiateNetworkCommunication:" destination="013-7C-FNg" eventType="touchUpInside" id="YWl-JK-8vy"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NM1-rm-uFh">
+                                <rect key="frame" x="130" y="367" width="114" height="30"/>
+                                <state key="normal" title="Send Hello"/>
+                                <connections>
+                                    <action selector="sendMessage:" destination="013-7C-FNg" eventType="touchUpInside" id="iJ0-sS-1Vs"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="NM1-rm-uFh" firstAttribute="top" secondItem="2DH-Mp-ejW" secondAttribute="bottom" constant="18.5" id="DJP-wo-4Nw"/>
+                            <constraint firstItem="2DH-Mp-ejW" firstAttribute="centerY" secondItem="UTs-M4-eXl" secondAttribute="centerY" id="Hac-HI-y8s"/>
+                            <constraint firstItem="NM1-rm-uFh" firstAttribute="trailing" secondItem="2DH-Mp-ejW" secondAttribute="trailing" id="aoE-Hb-p2q"/>
+                            <constraint firstItem="2DH-Mp-ejW" firstAttribute="centerX" secondItem="UTs-M4-eXl" secondAttribute="centerX" id="lTI-lW-LMr"/>
+                            <constraint firstItem="NM1-rm-uFh" firstAttribute="leading" secondItem="2DH-Mp-ejW" secondAttribute="leading" id="yqL-gb-U6z"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ogo-WU-LPh" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="845" y="110"/>
         </scene>
     </scenes>
 </document>
