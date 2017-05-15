@@ -9,5 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface ConnectionViewController : UIViewController
+@property (weak, nonatomic) IBOutlet UIImageView *imageView;
 
 @end

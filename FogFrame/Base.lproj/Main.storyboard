@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -96,9 +97,22 @@
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NM1-rm-uFh">
                                 <rect key="frame" x="130" y="367" width="114" height="30"/>
-                                <state key="normal" title="Send Hello"/>
+                                <state key="normal" title="Select image"/>
                                 <connections>
                                     <action selector="sendMessage:" destination="013-7C-FNg" eventType="touchUpInside" id="iJ0-sS-1Vs"/>
+                                </connections>
+                            </button>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ja4-jK-RYe">
+                                <rect key="frame" x="67" y="448" width="240" height="128"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="128" id="bQM-Ls-Odi"/>
+                                </constraints>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S6g-dN-1wf">
+                                <rect key="frame" x="130" y="268" width="114" height="30"/>
+                                <state key="normal" title="Send Image"/>
+                                <connections>
+                                    <action selector="sendImage:" destination="013-7C-FNg" eventType="touchUpInside" id="0Nk-BT-0hd"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -106,12 +120,21 @@
                         <constraints>
                             <constraint firstItem="NM1-rm-uFh" firstAttribute="top" secondItem="2DH-Mp-ejW" secondAttribute="bottom" constant="18.5" id="DJP-wo-4Nw"/>
                             <constraint firstItem="2DH-Mp-ejW" firstAttribute="centerY" secondItem="UTs-M4-eXl" secondAttribute="centerY" id="Hac-HI-y8s"/>
+                            <constraint firstItem="2DH-Mp-ejW" firstAttribute="top" secondItem="S6g-dN-1wf" secondAttribute="bottom" constant="20.5" id="OOB-7M-MUO"/>
+                            <constraint firstItem="S6g-dN-1wf" firstAttribute="leading" secondItem="2DH-Mp-ejW" secondAttribute="leading" id="QFp-FP-tAf"/>
+                            <constraint firstItem="ja4-jK-RYe" firstAttribute="top" secondItem="NM1-rm-uFh" secondAttribute="bottom" constant="51" id="ae2-jI-xce"/>
                             <constraint firstItem="NM1-rm-uFh" firstAttribute="trailing" secondItem="2DH-Mp-ejW" secondAttribute="trailing" id="aoE-Hb-p2q"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="ja4-jK-RYe" secondAttribute="trailing" constant="52" id="cTq-bA-Ker"/>
+                            <constraint firstItem="S6g-dN-1wf" firstAttribute="trailing" secondItem="2DH-Mp-ejW" secondAttribute="trailing" id="kkZ-m7-1L2"/>
                             <constraint firstItem="2DH-Mp-ejW" firstAttribute="centerX" secondItem="UTs-M4-eXl" secondAttribute="centerX" id="lTI-lW-LMr"/>
+                            <constraint firstItem="ja4-jK-RYe" firstAttribute="leading" secondItem="UTs-M4-eXl" secondAttribute="leadingMargin" constant="51" id="q7e-Yd-7OD"/>
                             <constraint firstItem="NM1-rm-uFh" firstAttribute="leading" secondItem="2DH-Mp-ejW" secondAttribute="leading" id="yqL-gb-U6z"/>
                         </constraints>
                     </view>
                     <nil key="simulatedStatusBarMetrics"/>
+                    <connections>
+                        <outlet property="imageView" destination="ja4-jK-RYe" id="syv-GU-7I4"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ogo-WU-LPh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

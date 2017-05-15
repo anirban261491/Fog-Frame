@@ -24,7 +24,7 @@
 - (IBAction)initiateNetworkCommunication:(id)sender {
     CFReadStreamRef readStream;
     CFWriteStreamRef writeStream;
-    CFStreamCreatePairWithSocketToHost(NULL, (CFStringRef)@"192.168.0.7", 8001, &readStream, &writeStream);
+    CFStreamCreatePairWithSocketToHost(NULL, (CFStringRef)@"192.168.42.1", 9444, &readStream, &writeStream);
     inputStream = (__bridge NSInputStream *)readStream;
     outputStream = (__bridge NSOutputStream *)writeStream;
     [inputStream setDelegate:self];
@@ -40,10 +40,47 @@
 }
 
 - (IBAction)sendMessage:(id)sender {
-    NSString *response  = @"Hello";
-    NSData *data = [[NSData alloc] initWithData:[response dataUsingEncoding:NSASCIIStringEncoding]];
-    NSInteger i=[outputStream write:[data bytes] maxLength:[data length]];
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    picker.allowsEditing = YES;
+    picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    
+    [self presentViewController:picker animated:YES completion:NULL];
+   
+//    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"App-Prefs:root=WIFI"] options:@{} completionHandler:^(BOOL success) {
+//        NSLog(@"Hello");
+//    }];
 }
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    
+    UIImage *chosenImage = info[UIImagePickerControllerEditedImage];
+    self.imageView.image = chosenImage;
+    
+    [picker dismissViewControllerAnimated:YES completion:NULL];
+    
+}
+- (IBAction)sendImage:(id)sender {
+    NSData *imgData = UIImagePNGRepresentation(self.imageView.image);
+    
+    NSMutableData *completeData = [NSMutableData new];
+    [completeData appendData:imgData];
+    
+    NSInteger bytesWritten = 0;
+    while ( completeData.length > bytesWritten )
+    {
+        while ( !outputStream.hasSpaceAvailable )
+            [NSThread sleepForTimeInterval:0.05];
+        
+        //sending NSData over to server
+        NSInteger writeResult = [outputStream write:[completeData bytes]+bytesWritten maxLength:[completeData length]-bytesWritten];
+        if ( writeResult == -1 ) {
+            NSLog(@"error code here");
+        }
+        else {
+            bytesWritten += writeResult;
+        }
+    }}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

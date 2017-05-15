@@ -5,9 +5,11 @@
 import socket
 import sys
 from thread import *
+from cStringIO import StringIO
+
  
 HOST = '192.168.0.7'   # Symbolic name, meaning all available interfaces
-PORT = 8001 # Arbitrary non-privileged port
+PORT = 8000 # Arbitrary non-privileged port
  
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print 'Socket created'
@@ -29,17 +31,17 @@ print 'Socket now listening'
 def clientthread(conn):
     #Sending message to connected client
     conn.send('Welcome to the server. Type something and hit enter\n') #send only takes string
-     
+    with open('tst.jpg', 'wb') as img:
     #infinite loop so that function do not terminate and thread do not end.
-    while True:
+    	while True:
          
         #Receiving from client
-        data = conn.recv(1024)
-        print data
-        if not data: 
-            break
+        	data = conn.recv(1024)
+        	if not data:
+           	 break
+        	img.write(data)
      
-        conn.sendall(reply)
+        #conn.sendall(reply)
      
     #came out of loop
     conn.close()
