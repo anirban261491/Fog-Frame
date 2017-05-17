@@ -12,7 +12,14 @@
 {
     NSInputStream *inputStream;
     NSOutputStream *outputStream;
+    BOOL flag_canSendDirectly;
+    NSInteger currentDataOffset;
+    uint8_t *readBytes;
+    NSUInteger dataLength;
+    NSData *imgData;
 }
+@property NSMutableArray* dataWriteQueue;
+
 @end
 
 @implementation ConnectionViewController
@@ -20,23 +27,25 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    _dataWriteQueue=[NSMutableArray new];
+    currentDataOffset=0;
 }
 - (IBAction)initiateNetworkCommunication:(id)sender {
-    CFReadStreamRef readStream;
-    CFWriteStreamRef writeStream;
-    CFStreamCreatePairWithSocketToHost(NULL, (CFStringRef)@"192.168.42.1", 9444, &readStream, &writeStream);
-    inputStream = (__bridge NSInputStream *)readStream;
-    outputStream = (__bridge NSOutputStream *)writeStream;
-    [inputStream setDelegate:self];
-    [outputStream setDelegate:self];
-    [inputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-    [outputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-    [inputStream open];
-    [outputStream open];
+    
 }
 
 - (void)stream:(NSStream *)theStream handleEvent:(NSStreamEvent)streamEvent {
-    NSLog(@"stream event %lu", (unsigned long)streamEvent);
+    switch(streamEvent)
+    {
+        case NSStreamEventHasSpaceAvailable: {
+            [self _sendData];
+            break;
+    }
+        case NSStreamEventEndEncountered: {
+                break;
+        }
+
+    }
 }
 
 - (IBAction)sendMessage:(id)sender {
@@ -61,26 +70,64 @@
     
 }
 - (IBAction)sendImage:(id)sender {
-    NSData *imgData = UIImagePNGRepresentation(self.imageView.image);
+    CFReadStreamRef readStream;
+    CFWriteStreamRef writeStream;
+    CFStreamCreatePairWithSocketToHost(NULL, (CFStringRef)@"192.168.42.1", 9444, &readStream, &writeStream);
+    inputStream = (__bridge NSInputStream *)readStream;
+    outputStream = (__bridge NSOutputStream *)writeStream;
+    [inputStream setDelegate:self];
+    [outputStream setDelegate:self];
+    [inputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    [outputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    [inputStream open];
+    [outputStream open];
+    imgData = UIImageJPEGRepresentation (self.imageView.image,1.0);
+    dataLength = [imgData length];
+    readBytes = (uint8_t *)[imgData bytes];
+    [self _sendData];
+//    NSMutableData *completeData = [NSMutableData new];
+//    [completeData appendData:imgData];
+//    
+//    NSInteger bytesWritten = 0;
+//    while ( completeData.length > bytesWritten )
+//    {
+//        while ( !outputStream.hasSpaceAvailable )
+//            [NSThread sleepForTimeInterval:0.05];
+//        
+//        //sending NSData over to server
+//        NSInteger writeResult = [outputStream write:[completeData bytes]+bytesWritten maxLength:[completeData length]-bytesWritten];
+//        if ( writeResult == -1 ) {
+//            NSLog(@"error code here");
+//        }
+//        else {
+//            bytesWritten += writeResult;
+//        }
+//    }
+}
+
+- (void)sendData:(NSData *)data {
     
-    NSMutableData *completeData = [NSMutableData new];
-    [completeData appendData:imgData];
+}
+
+- (void)_sendData {
+    if (readBytes==NULL) {
+        return;
+    }
+    readBytes = (uint8_t *)[imgData bytes];
+    readBytes += currentDataOffset;
     
-    NSInteger bytesWritten = 0;
-    while ( completeData.length > bytesWritten )
-    {
-        while ( !outputStream.hasSpaceAvailable )
-            [NSThread sleepForTimeInterval:0.05];
-        
-        //sending NSData over to server
-        NSInteger writeResult = [outputStream write:[completeData bytes]+bytesWritten maxLength:[completeData length]-bytesWritten];
-        if ( writeResult == -1 ) {
-            NSLog(@"error code here");
+    NSUInteger lengthOfDataToWrite = (dataLength - currentDataOffset >= 1024) ? 1024 : (dataLength - currentDataOffset);
+    NSInteger bytesWritten = [outputStream write:readBytes maxLength:lengthOfDataToWrite];
+    if (bytesWritten > 0) {
+        currentDataOffset += bytesWritten;
+        if (currentDataOffset == dataLength) {
+            currentDataOffset = 0;
+            readBytes=NULL;
+            [outputStream close];
+            [inputStream close];
         }
-        else {
-            bytesWritten += writeResult;
-        }
-    }}
+    }
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
