@@ -8,14 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
-
+#import "TestViewController.h"
 @interface ViewController : UIViewController<AVCaptureMetadataOutputObjectsDelegate>
     
 @property (nonatomic, strong) AVCaptureSession *captureSession;
 @property (nonatomic, strong) AVCaptureVideoPreviewLayer *videoPreviewLayer;
 @property (weak, nonatomic) IBOutlet UIView *viewPreview;
-@property (weak, nonatomic) IBOutlet UILabel *SSIDLabel;
-@property (weak, nonatomic) IBOutlet UILabel *PasswordLabel;
-
+@property (weak, nonatomic) IBOutlet UITextField *NameTextField;
+@property TestViewController *v;
 @end
 

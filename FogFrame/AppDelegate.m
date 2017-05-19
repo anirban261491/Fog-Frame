@@ -7,11 +7,12 @@
 //
 
 #import "AppDelegate.h"
-
+#import "TestViewController.h"
 @interface AppDelegate ()
-
 @end
-
+static TestViewController *t=nil;
+extern BOOL isImageUpdated;
+extern int UserID;
 @implementation AppDelegate
 
 
@@ -36,7 +37,10 @@
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
     // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
-    NSLog(@"Hello");
+    if(t&&isImageUpdated)
+    {
+        [t sendImage];
+    }
 }
 
 
@@ -48,6 +52,11 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
++(void)setConnectionViewController:(UIViewController*)tv
+{
+    t=(TestViewController*)tv;
 }
 
 

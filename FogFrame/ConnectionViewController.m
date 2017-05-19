@@ -8,7 +8,7 @@
 
 #import "ConnectionViewController.h"
 
-@interface ConnectionViewController ()<NSStreamDelegate>
+@interface ConnectionViewController ()<NSStreamDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate>
 {
     NSInputStream *inputStream;
     NSOutputStream *outputStream;
@@ -17,6 +17,9 @@
     uint8_t *readBytes;
     NSUInteger dataLength;
     NSData *imgData;
+    float oldX, oldY;
+    UIImageView *DraggedImageView;
+    UILongPressGestureRecognizer *lpgr;
 }
 @property NSMutableArray* dataWriteQueue;
 
@@ -27,11 +30,62 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    _FrameImageView.layer.borderColor=[[UIColor grayColor] CGColor];
+    _FrameImageView.layer.borderWidth=1.0f;
     _dataWriteQueue=[NSMutableArray new];
     currentDataOffset=0;
-}
-- (IBAction)initiateNetworkCommunication:(id)sender {
+    UITapGestureRecognizer *tap=[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(selectImage)];
+    [_imageView addGestureRecognizer:tap];
+    lpgr = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressGestures:)];
+    lpgr.minimumPressDuration = 0.5f;
+    lpgr.allowableMovement = 100.0f;
     
+    [self.imageView addGestureRecognizer:lpgr];
+    
+}
+
+-(void)selectImage
+{
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    picker.allowsEditing = YES;
+    picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    
+    [self presentViewController:picker animated:YES completion:NULL];
+}
+
+
+- (void)handleLongPressGestures:(UILongPressGestureRecognizer *)sender
+{
+    if ([sender isEqual:lpgr]) {
+        CGPoint touchLocation = [sender locationInView:self.view];
+        if (sender.state == UIGestureRecognizerStateBegan)
+        {
+            DraggedImageView=[[UIImageView alloc] initWithImage:_imageView.image];
+            DraggedImageView.frame=CGRectMake(0, 0, _imageView.frame.size.width-20, _imageView.frame.size.height-20);
+            DraggedImageView.center=_imageView.center;
+            DraggedImageView.contentMode=UIViewContentModeScaleAspectFit;
+            DraggedImageView.alpha=0.5f;
+            DraggedImageView.userInteractionEnabled=YES;
+            [self.view addSubview:DraggedImageView];
+            oldX = touchLocation.x;
+            oldY = touchLocation.y;
+        }
+        else if (sender.state == UIGestureRecognizerStateChanged)
+        {
+            CGRect frame = DraggedImageView.frame;
+            frame.origin.x = DraggedImageView.frame.origin.x + touchLocation.x - oldX;
+            frame.origin.y =  DraggedImageView.frame.origin.y + touchLocation.y - oldY;
+            DraggedImageView.frame = frame;
+            oldX = touchLocation.x;
+            oldY = touchLocation.y;
+        }
+        else if (sender.state == UIGestureRecognizerStateEnded)
+        {
+            [DraggedImageView removeFromSuperview];
+            [self sendImage];
+        }
+    }
 }
 
 - (void)stream:(NSStream *)theStream handleEvent:(NSStreamEvent)streamEvent {
@@ -44,7 +98,14 @@
         case NSStreamEventEndEncountered: {
                 break;
         }
-
+        
+        case NSStreamEventErrorOccurred:{
+            break;
+        }
+        
+        case NSStreamEventOpenCompleted:{
+            
+        }
     }
 }
 
@@ -69,10 +130,10 @@
     [picker dismissViewControllerAnimated:YES completion:NULL];
     
 }
-- (IBAction)sendImage:(id)sender {
+- (void)sendImage {
     CFReadStreamRef readStream;
     CFWriteStreamRef writeStream;
-    CFStreamCreatePairWithSocketToHost(NULL, (CFStringRef)@"192.168.42.1", 9444, &readStream, &writeStream);
+    CFStreamCreatePairWithSocketToHost(NULL, (CFStringRef)@"192.168.42.2", 9444, &readStream, &writeStream);
     inputStream = (__bridge NSInputStream *)readStream;
     outputStream = (__bridge NSOutputStream *)writeStream;
     [inputStream setDelegate:self];
@@ -81,28 +142,10 @@
     [outputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
     [inputStream open];
     [outputStream open];
-    imgData = UIImageJPEGRepresentation (self.imageView.image,1.0);
+    imgData = UIImagePNGRepresentation(self.imageView.image);
     dataLength = [imgData length];
     readBytes = (uint8_t *)[imgData bytes];
     [self _sendData];
-//    NSMutableData *completeData = [NSMutableData new];
-//    [completeData appendData:imgData];
-//    
-//    NSInteger bytesWritten = 0;
-//    while ( completeData.length > bytesWritten )
-//    {
-//        while ( !outputStream.hasSpaceAvailable )
-//            [NSThread sleepForTimeInterval:0.05];
-//        
-//        //sending NSData over to server
-//        NSInteger writeResult = [outputStream write:[completeData bytes]+bytesWritten maxLength:[completeData length]-bytesWritten];
-//        if ( writeResult == -1 ) {
-//            NSLog(@"error code here");
-//        }
-//        else {
-//            bytesWritten += writeResult;
-//        }
-//    }
 }
 
 - (void)sendData:(NSData *)data {
@@ -125,6 +168,21 @@
             readBytes=NULL;
             [outputStream close];
             [inputStream close];
+            UIAlertController * alert = [UIAlertController
+                                         alertControllerWithTitle:nil
+                                         message:@"Transfer successful"
+                                         preferredStyle:UIAlertControllerStyleAlert];
+            
+            
+            
+            UIAlertAction* yesButton = [UIAlertAction
+                                        actionWithTitle:@"Ok"
+                                        style:UIAlertActionStyleDefault
+                                        handler:^(UIAlertAction * action) {
+                                            _FrameImageView.image=self.imageView.image;
+                                        }];
+            [alert addAction:yesButton];
+            [self presentViewController:alert animated:YES completion:nil];
         }
     }
 }
